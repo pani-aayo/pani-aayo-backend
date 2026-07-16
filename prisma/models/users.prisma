@@ -1,0 +1,34 @@
+model User {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique @map("code")
+  name      String   @map("name")
+  email     String   @unique @map("email")
+  password  String   @map("password")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  userRoles        UserRoles[]
+  pipelinesCreated Pipeline[]  @relation("PipelineCreatedBy")
+  pipelinesUpdated Pipeline[]  @relation("PipelineUpdatedBy")
+  pipelinesDeleted Pipeline[]  @relation("PipelineDeletedBy")
+
+  @@map("users")
+}
+
+model UserRoles {
+  id        Int      @id @default(autoincrement()) @map("id")
+  userCode  String   @map("user_code")
+  role      UserRole @map("role")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User? @relation(fields: [userCode], references: [code])
+
+  @@map("user_roles")
+}
+
+enum UserRole {
+  ADMIN
+  OPERATOR
+  RESIDENT
+}

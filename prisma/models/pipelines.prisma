@@ -1,0 +1,53 @@
+model Pipeline {
+  id             Int            @id @default(autoincrement()) @map("id")
+  code           String         @unique @map("code")
+  name           String         @map("name")
+  areaServed     String         @map("area_served")
+  flowRate       Float?         @map("flow_rate")
+  description    String?        @map("description")
+  status         PipelineStatus @default(CLOSED) @map("status")
+  lastOpen       DateTime?      @map("last_open")
+  totalSubs      Int?           @map("total_subs")
+  routineSummary String?        @map("routine_summary")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+  deletedAt      DateTime?      @map("deleted_at")
+  createdBy      String         @map("created_by")
+  updatedBy      String?        @map("updated_by")
+  deletedBy      String?        @map("deleted_by")
+
+  createdByUser     User                @relation("PipelineCreatedBy", fields: [createdBy], references: [code])
+  updatedByUser     User?               @relation("PipelineUpdatedBy", fields: [updatedBy], references: [code])
+  deletedByUser     User?               @relation("PipelineDeletedBy", fields: [deletedBy], references: [code])
+  PipelineOperators PipelineOperators[]
+
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([deletedAt])
+  @@index([createdBy])
+  @@index([updatedBy])
+  @@index([deletedBy])
+  @@index([status])
+  @@map("pipelines")
+}
+
+model PipelineOperators {
+  id           Int      @id @default(autoincrement()) @map("id")
+  pipelineCode String   @map("pipeline_code")
+  operatorCode String   @map("operator_code")
+  createdAt    DateTime @default(now()) @map("created_at")
+  createdBy    String   @map("created_by")
+
+  pipeline Pipeline @relation(fields: [pipelineCode], references: [code])
+
+  @@unique([pipelineCode, operatorCode])
+  @@index([pipelineCode])
+  @@index([operatorCode])
+  @@map("pipeline_operators")
+}
+
+enum PipelineStatus {
+  OPEN
+  CLOSED
+  MAINTENANCE
+}

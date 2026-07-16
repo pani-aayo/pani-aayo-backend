@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "backend",
+      "type": "node",
+      "request": "attach",
+      "port": 9001,
+      "restart": true,
+      "localRoot": "${workspaceFolder}/src/app"
+    },
+    {
+      "name": "backend-docker",
+      "type": "node",
+      "request": "attach",
+      "port": 9001,
+      "restart": true,
+      "remoteRoot": "/app"
+    }
+  ]
+}
