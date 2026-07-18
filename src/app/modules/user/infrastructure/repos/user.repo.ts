@@ -51,6 +51,16 @@ class UserRepo {
   async findByCode(code: string) {
     return this.prisma.user.findUnique({ where: { code } });
   }
+
+  async findOperatorsByCodes(codes: string[]) {
+    return this.prisma.user.findMany({
+      where: {
+        code: { in: codes },
+        userRoles: { some: { role: UserRole.OPERATOR } },
+      },
+      select: { code: true, name: true, email: true },
+    });
+  }
 }
 
 export default UserRepo;

@@ -10,6 +10,6 @@ import UserController from './presentation/http/controllers/user.controller';
   imports: [],
   controllers: [UserController, OperatorController],
   providers: [LoginUsecase, UserRepo, CreateOperatorUsecase, FetchOperatorsUsecase],
-  exports: [],
+  exports: [UserRepo],
 })
 export class UserModule {}

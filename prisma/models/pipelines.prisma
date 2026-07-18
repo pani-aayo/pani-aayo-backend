@@ -20,6 +20,7 @@ model Pipeline {
   updatedByUser     User?               @relation("PipelineUpdatedBy", fields: [updatedBy], references: [code])
   deletedByUser     User?               @relation("PipelineDeletedBy", fields: [deletedBy], references: [code])
   PipelineOperators PipelineOperators[]
+  pipelineRoutines  PipelineRoutines?
 
   @@index([createdAt])
   @@index([updatedAt])
@@ -44,6 +45,26 @@ model PipelineOperators {
   @@index([pipelineCode])
   @@index([operatorCode])
   @@map("pipeline_operators")
+}
+
+model PipelineRoutines {
+  id           Int      @id @default(autoincrement()) @map("id")
+  code         String   @unique @map("routine_code")
+  pipelineCode String   @unique @map("pipeline_code")
+  routine      Json?    @map("routine")
+  createdAt    DateTime @default(now()) @map("created_at")
+  createdBy    String   @map("created_by")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  updatedBy    String?  @map("updated_by")
+
+  pipeline Pipeline @relation(fields: [pipelineCode], references: [code])
+
+  @@index([pipelineCode])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([createdBy])
+  @@index([updatedBy])
+  @@map("pipeline_routines")
 }
 
 enum PipelineStatus {
