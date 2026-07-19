@@ -61,6 +61,22 @@ class UserRepo {
       select: { code: true, name: true, email: true },
     });
   }
+
+  async upsertDevice(userCode: string, deviceId: string) {
+    return this.prisma.userDevices.upsert({
+      where: { deviceId },
+      create: { userCode, deviceId },
+      update: { userCode },
+    });
+  }
+
+  async removeDevice(userCode: string, deviceId: string) {
+    await this.prisma.userDevices.deleteMany({ where: { userCode, deviceId } });
+  }
+
+  async removeDeviceByDeviceId(deviceId: string) {
+    await this.prisma.userDevices.deleteMany({ where: { deviceId } });
+  }
 }
 
 export default UserRepo;

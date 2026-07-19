@@ -7,12 +7,28 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  userRoles        UserRoles[]
-  pipelinesCreated Pipeline[]  @relation("PipelineCreatedBy")
-  pipelinesUpdated Pipeline[]  @relation("PipelineUpdatedBy")
-  pipelinesDeleted Pipeline[]  @relation("PipelineDeletedBy")
+  userRoles             UserRoles[]
+  pipelinesCreated      Pipeline[]              @relation("PipelineCreatedBy")
+  pipelinesUpdated      Pipeline[]              @relation("PipelineUpdatedBy")
+  pipelinesDeleted      Pipeline[]              @relation("PipelineDeletedBy")
+  pipelinesOperators    PipelineOperators[]
+  devices               UserDevices[]
+  pipelineSubscriptions PipelineSubscriptions[]
 
   @@map("users")
+}
+
+model UserDevices {
+  id        Int      @id @default(autoincrement()) @map("id")
+  userCode  String   @map("user_code")
+  deviceId  String   @unique @map("device_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userCode], references: [code])
+
+  @@index([userCode])
+  @@map("user_devices")
 }
 
 model UserRoles {

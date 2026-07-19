@@ -4,12 +4,13 @@ import { APP_PIPE } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { AuthModule } from './auth/auth.module';
 import { validateEnv } from './config/env.schema';
+import { NotificationsModule } from './notifications/notifications.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Global()
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true, cache: true, validate: validateEnv }), PrismaModule, AuthModule],
+  imports: [ConfigModule.forRoot({ isGlobal: true, cache: true, validate: validateEnv }), PrismaModule, AuthModule, NotificationsModule],
   providers: [{ provide: APP_PIPE, useClass: ZodValidationPipe }],
-  exports: [PrismaModule, AuthModule],
+  exports: [PrismaModule, AuthModule, NotificationsModule],
 })
 export class GlobalModule {}

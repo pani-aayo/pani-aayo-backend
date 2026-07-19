@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import UserRepo from '../../../user/infrastructure/repos/user.repo';
 import PipelineRepo from '../../infrastructure/repos/pipeline.repo';
-import { SetPipelineOperatorsDto } from '../dtos/set-pipeline-operators.dto';
+import { SetPipelineOperatorsDto } from '../../presentation/http/dtos/set-pipeline-operators.dto';
 
 @Injectable()
 class SetPipelineOperatorsUsecase {
