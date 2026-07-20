@@ -26,6 +26,10 @@ class LoginUsecase {
       roles: user.userRoles.map((userRole) => userRole.role),
     });
 
+    if (dto.deviceId) {
+      await this.userRepo.upsertDevice(user.code, dto.deviceId);
+    }
+
     return {
       accessToken,
       user: {

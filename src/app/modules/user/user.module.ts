@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import CreateOperatorUsecase from './application/usecases/create-operator.usecase';
 import FetchOperatorsUsecase from './application/usecases/fetch-operators.usecase';
 import LoginUsecase from './application/usecases/login.usecase';
+import LogoutUsecase from './application/usecases/logout.usecase';
+import RegisterResidentUsecase from './application/usecases/register-resident.usecase';
+import UpsertDeviceUsecase from './application/usecases/upsert-device.usecase';
 import UserRepo from './infrastructure/repos/user.repo';
 import OperatorController from './presentation/http/controllers/operator.controller';
 import UserController from './presentation/http/controllers/user.controller';
@@ -9,7 +12,15 @@ import UserController from './presentation/http/controllers/user.controller';
 @Module({
   imports: [],
   controllers: [UserController, OperatorController],
-  providers: [LoginUsecase, UserRepo, CreateOperatorUsecase, FetchOperatorsUsecase],
+  providers: [
+    LoginUsecase,
+    LogoutUsecase,
+    RegisterResidentUsecase,
+    UpsertDeviceUsecase,
+    UserRepo,
+    CreateOperatorUsecase,
+    FetchOperatorsUsecase,
+  ],
   exports: [UserRepo],
 })
 export class UserModule {}

@@ -1,19 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import PipelineRepo from '../../infrastructure/repos/pipeline.repo';
-import { CreatePipelineRoutineDto } from '../../presentation/http/dtos/create-pipeline-routine.dto';
 
 @Injectable()
-class CreatePipelineRoutineUsecase {
+class FetchAssignedOperatorsUsecase {
   constructor(private readonly pipelineRepo: PipelineRepo) {}
 
-  async execute(pipelineCode: string, dto: CreatePipelineRoutineDto, userCode: string) {
+  async execute(pipelineCode: string) {
     const pipeline = await this.pipelineRepo.findByCode(pipelineCode);
     if (!pipeline) {
       throw new NotFoundException('Pipeline not found');
     }
 
-    return this.pipelineRepo.setRoutine(pipelineCode, dto, userCode);
+    return this.pipelineRepo.getAssignedOperators(pipelineCode);
   }
 }
 
-export default CreatePipelineRoutineUsecase;
+export default FetchAssignedOperatorsUsecase;

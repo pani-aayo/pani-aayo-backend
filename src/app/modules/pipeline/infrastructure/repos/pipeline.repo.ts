@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '../../../../../generated/prisma/client';
+import { PipelineStatus } from '../../../../../generated/prisma/enums';
 import { PrismaService } from '../../../../../shared/prisma/prisma.service';
-import { CreatePipelineRoutineDto } from '../../application/dtos/create-pipeline-routine.dto';
+import { CreatePipelineRoutineDto } from '../../presentation/http/dtos/create-pipeline-routine.dto';
 import { FetchPipelinesParams, fetchPipelinesQuery } from './queries/fetch-pipelines.query';
 
 @Injectable()
@@ -60,6 +61,62 @@ class PipelineRepo {
         })),
       };
     });
+  }
+
+  async getAssignedOperators(pipelineCode: string) {
+    const operators = await this.prisma.pipelineOperators.findMany({ where: { pipelineCode }, include: { operator: true } });
+
+    return operators.map((operator) => ({
+      code: operator.operatorCode,
+      name: operator.operator.name,
+      email: operator.operator.email,
+      assignedAt: operator.createdAt,
+    }));
+  }
+
+  async open(pipelineCode: string, updatedBy: string) {
+    return this.prisma.pipeline.update({
+      where: { code: pipelineCode },
+      data: { status: PipelineStatus.OPEN, lastOpen: new Date(), updatedBy },
+    });
+  }
+
+  async close(pipelineCode: string, updatedBy: string) {
+    return this.prisma.pipeline.update({
+      where: { code: pipelineCode },
+      data: { status: PipelineStatus.CLOSED, lastOpen: new Date(), updatedBy },
+    });
+  }
+
+  async subscribe(pipelineCode: string, userCode: string) {
+    const [subscription] = await this.prisma.$transaction([
+      this.prisma.pipelineSubscriptions.create({ data: { pipelineCode, userCode } }),
+      this.prisma.$executeRaw`UPDATE pipelines SET total_subs = COALESCE(total_subs, 0) + 1 WHERE code = ${pipelineCode}`,
+    ]);
+
+    return subscription;
+  }
+
+  async unsubscribe(pipelineCode: string, userCode: string) {
+    await this.prisma.$transaction([
+      this.prisma.pipelineSubscriptions.delete({ where: { pipelineCode_userCode: { pipelineCode, userCode } } }),
+      this.prisma.$executeRaw`UPDATE pipelines SET total_subs = GREATEST(COALESCE(total_subs, 0) - 1, 0) WHERE code = ${pipelineCode}`,
+    ]);
+  }
+
+  async findSubscribed(userCode: string) {
+    return this.prisma.pipeline.findMany({
+      where: { PipelineSubscriptions: { some: { userCode } }, deletedAt: null },
+    });
+  }
+
+  async getSubscribedDeviceIds(pipelineCode: string): Promise<string[]> {
+    const devices = await this.prisma.userDevices.findMany({
+      where: { user: { pipelineSubscriptions: { some: { pipelineCode } } } },
+      select: { deviceId: true },
+    });
+
+    return devices.map((device) => device.deviceId);
   }
 
   async setRoutine(pipelineCode: string, dto: CreatePipelineRoutineDto, userCode: string) {

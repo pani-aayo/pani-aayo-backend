@@ -16,11 +16,12 @@ model Pipeline {
   updatedBy      String?        @map("updated_by")
   deletedBy      String?        @map("deleted_by")
 
-  createdByUser     User                @relation("PipelineCreatedBy", fields: [createdBy], references: [code])
-  updatedByUser     User?               @relation("PipelineUpdatedBy", fields: [updatedBy], references: [code])
-  deletedByUser     User?               @relation("PipelineDeletedBy", fields: [deletedBy], references: [code])
-  PipelineOperators PipelineOperators[]
-  pipelineRoutines  PipelineRoutines?
+  createdByUser         User                    @relation("PipelineCreatedBy", fields: [createdBy], references: [code])
+  updatedByUser         User?                   @relation("PipelineUpdatedBy", fields: [updatedBy], references: [code])
+  deletedByUser         User?                   @relation("PipelineDeletedBy", fields: [deletedBy], references: [code])
+  PipelineOperators     PipelineOperators[]
+  pipelineRoutines      PipelineRoutines?
+  PipelineSubscriptions PipelineSubscriptions[]
 
   @@index([createdAt])
   @@index([updatedAt])
@@ -40,6 +41,7 @@ model PipelineOperators {
   createdBy    String   @map("created_by")
 
   pipeline Pipeline @relation(fields: [pipelineCode], references: [code])
+  operator User     @relation(fields: [operatorCode], references: [code])
 
   @@unique([pipelineCode, operatorCode])
   @@index([pipelineCode])
@@ -65,6 +67,21 @@ model PipelineRoutines {
   @@index([createdBy])
   @@index([updatedBy])
   @@map("pipeline_routines")
+}
+
+model PipelineSubscriptions {
+  id           Int      @id @default(autoincrement()) @map("id")
+  pipelineCode String   @map("pipeline_code")
+  userCode     String   @map("user_code")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  pipeline Pipeline @relation(fields: [pipelineCode], references: [code])
+  user     User     @relation(fields: [userCode], references: [code])
+
+  @@unique([pipelineCode, userCode])
+  @@index([pipelineCode])
+  @@index([userCode])
+  @@map("pipeline_subscriptions")
 }
 
 enum PipelineStatus {

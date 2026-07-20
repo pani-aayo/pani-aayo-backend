@@ -1,6 +1,6 @@
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
-import { PipelineStatus } from '../../../../../generated/prisma/enums';
+import { PipelineStatus } from '../../../../../../generated/prisma/enums';
 
 export const createPipelineSchema = z.object({
   name: z.string().min(1),

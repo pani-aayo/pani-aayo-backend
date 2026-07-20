@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import PipelineRepo from '../../infrastructure/repos/pipeline.repo';
-import { ListPipelinesDto } from '../dtos/list-pipelines.dto';
+import { ListPipelinesDto } from '../../presentation/http/dtos/list-pipelines.dto';
 
 @Injectable()
 class ListPipelinesUsecase {
