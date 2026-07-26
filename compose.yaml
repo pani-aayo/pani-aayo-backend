@@ -3,7 +3,7 @@ services:
     container_name: api
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
     ports:
       - '${PORT:-3000}:3000'
       - '9001:9001'
