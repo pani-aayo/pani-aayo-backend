@@ -18,12 +18,6 @@ export const envSchema = z.object({
   FIREBASE_PROJECT_ID: z.string().min(1).optional(),
   FIREBASE_CLIENT_EMAIL: z.string().min(1).optional(),
   FIREBASE_PRIVATE_KEY: z.string().min(1).optional(),
-
-  APNS_TEAM_ID: z.string().min(1).optional(),
-  APNS_KEY_ID: z.string().min(1).optional(),
-  APNS_AUTH_KEY: z.string().min(1).optional(),
-  APNS_BUNDLE_ID: z.string().min(1).optional(),
-  APNS_ENVIRONMENT: z.enum(['sandbox', 'production']).default('sandbox'),
 });
 
 export type Env = z.infer<typeof envSchema>;
