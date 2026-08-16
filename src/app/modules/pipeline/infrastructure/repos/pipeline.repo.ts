@@ -110,13 +110,11 @@ class PipelineRepo {
     });
   }
 
-  async getSubscribedDeviceIds(pipelineCode: string): Promise<string[]> {
-    const devices = await this.prisma.userDevices.findMany({
+  async getSubscribedDevices(pipelineCode: string): Promise<{ deviceId: string; voipToken: string | null }[]> {
+    return this.prisma.userDevices.findMany({
       where: { user: { pipelineSubscriptions: { some: { pipelineCode } } } },
-      select: { deviceId: true },
+      select: { deviceId: true, voipToken: true },
     });
-
-    return devices.map((device) => device.deviceId);
   }
 
   async setRoutine(pipelineCode: string, dto: CreatePipelineRoutineDto, userCode: string) {

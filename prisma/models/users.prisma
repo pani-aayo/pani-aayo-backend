@@ -22,6 +22,7 @@ model UserDevices {
   id        Int      @id @default(autoincrement()) @map("id")
   userCode  String   @map("user_code")
   deviceId  String   @unique @map("device_id")
+  voipToken String?  @map("voip_token")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
