@@ -62,11 +62,11 @@ class UserRepo {
     });
   }
 
-  async upsertDevice(userCode: string, deviceId: string) {
+  async upsertDevice(userCode: string, deviceId: string, voipToken?: string) {
     return this.prisma.userDevices.upsert({
       where: { deviceId },
-      create: { userCode, deviceId },
-      update: { userCode },
+      create: { userCode, deviceId, voipToken },
+      update: { userCode, ...(voipToken !== undefined && { voipToken }) },
     });
   }
 
@@ -76,6 +76,10 @@ class UserRepo {
 
   async removeDeviceByDeviceId(deviceId: string) {
     await this.prisma.userDevices.deleteMany({ where: { deviceId } });
+  }
+
+  async clearVoipToken(voipToken: string) {
+    await this.prisma.userDevices.updateMany({ where: { voipToken }, data: { voipToken: null } });
   }
 }
 
